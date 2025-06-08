@@ -38,6 +38,12 @@ public class TopDownUtilities : ModuleRules
 				"Engine",
 				"Slate",
 				"SlateCore",
+				/*
+				In your PlayerController or Pawn
+				#include "EnhancedInputComponent.h"
+				#include "EnhancedInputSubsystems.h"
+				*/
+				"EnhancedInput"
 				// ... add private dependencies that you statically link with here ...	
 			}
 			);

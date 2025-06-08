@@ -10,6 +10,9 @@
 class UCapsuleComponent;
 class USpringArmComponent;
 class UCameraComponent;
+class UInputAction;
+
+struct FInputActionValue;
 
 UCLASS()
 class TOPDOWNUTILITIES_API AControllerPawn : public APawn
@@ -26,6 +29,10 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = Collision, meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* CameraComponent;
 
+	//UInputAction
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	UInputAction* MoveAction;
+
 public:
 	// Sets default values for this pawn's properties
 	AControllerPawn();
@@ -34,6 +41,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	void Move(const FInputActionValue& Value);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
