@@ -56,8 +56,21 @@ void AControllerPawn::Move(const FInputActionValue& Value)
 	const FVector2D MovementInput = Value.Get<FVector2D>();
 	if (Controller)
 	{
-		//Use the input and add movement input to the pawn
-		AddMovementInput(GetActorForwardVector(), MovementInput.Y);
+		const FRotator Rotation = Controller->GetControlRotation();
+		//•	Creates a new rotation that only uses the yaw (left/right), ignoring pitch and roll. This keeps movement parallel to the ground.
+		const FRotator YawRotation = FRotator(0, Rotation.Yaw, 0);
+
+		//FRotationMatrix(YawRotation) convert an FRotator into a matrix
+		//GetUnitAxis(EAxis::X) give me the X axis of this rotated coordinate system, and unify it.
+		//EAxis means an enum type, and use scope resolution operator :: to access members from it.
+		//Why not Axis.X or EAxix->X? 
+		//•	EAxis.X would be used if EAxis was a struct or class instance (which it is not).
+		//• EAxis->X would be used if EAxis was a pointer to a struct or class (which it is not).
+		const FVector Forward = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		const FVector Right = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+
+		AddMovementInput(Forward, MovementInput.Y);
+		AddMovementInput(Right, MovementInput.X);
 	}
 }
 
