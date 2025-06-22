@@ -23,21 +23,27 @@ class TOPDOWNUTILITIES_API AControllerPawn : public APawn
 
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = Collision, meta = (AllowPrivateAccess = "true"))
-	UCapsuleComponent* CapsuleComponent;
+	TObjectPtr<UCapsuleComponent> CapsuleComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = Collision, meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* SpringArmComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<USpringArmComponent> SpringArmComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = Collision, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* CameraComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UCameraComponent> Camera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	float CameraZoomSpeed = 418.0f;
 
 	//UInputAction
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input", meta = (AllowPrivateAccess = "true"))
-	UInputAction* MoveAction;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> MoveAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadonly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> ZoomAction;
 
 	//floating pawn movement component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Movement", meta = (AllowPrivateAccess = "true"))
-	UFloatingPawnMovement* FloatingPawnMovement;
+	TObjectPtr<UFloatingPawnMovement> FloatingPawnMovement;
 
 public:
 	// Sets default values for this pawn's properties
@@ -48,6 +54,8 @@ protected:
 	virtual void BeginPlay() override;
 
 	void Move(const FInputActionValue& Value);
+
+	void Zoom(const FInputActionValue& Value);
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

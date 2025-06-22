@@ -22,9 +22,9 @@ AControllerPawn::AControllerPawn()
 	CapsuleComponent->SetHiddenInGame(false);
 
 	//Create camera components
-	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("CharacterCameraComponent"));
+	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("CharacterCamera"));
 	//set camera to orthographic mode
-	CameraComponent->SetProjectionMode(ECameraProjectionMode::Orthographic);
+	Camera->SetProjectionMode(ECameraProjectionMode::Orthographic);
 
 	//Create spring arm component
 	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
@@ -37,7 +37,7 @@ AControllerPawn::AControllerPawn()
 	//Set the spring arm as the root component
 	SpringArmComponent->SetupAttachment(RootComponent);
 	//Attach the CharacterCameraComponet to the SpringArm
-	CameraComponent->SetupAttachment(SpringArmComponent);
+	Camera->SetupAttachment(SpringArmComponent);
 
 	//Create a floating pawn movement component
 	FloatingPawnMovement = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("FloatingPawnMovement"));
@@ -74,6 +74,16 @@ void AControllerPawn::Move(const FInputActionValue& Value)
 	}
 }
 
+void AControllerPawn::Zoom(const FInputActionValue& Value)
+{
+	const float ZoomDirection = Value.Get<float>();
+	if (Controller != nullptr)
+	{
+		float DesiredOrthographicWidth = Camera->OrthoWidth + ZoomDirection * CameraZoomSpeed;
+		Camera->SetOrthoWidth(FMath::Clamp(DesiredOrthographicWidth, 100.0f, 2000.0f));
+	}
+}
+
 // Called every frame
 void AControllerPawn::Tick(float DeltaTime)
 {
@@ -86,9 +96,10 @@ void AControllerPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	//Check if Cast to enhanced input component success, then bind MoveAction to the move function.
+	//Check if Cast to enhanced input component success, then bind MoveAction and ZoomAction to the assoiated function.
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
+		EnhancedInputComponent->BindAction(ZoomAction, ETriggerEvent::Triggered, this, &AControllerPawn::Zoom);
 		if (MoveAction)
 		{
 			//Bind the MoveAction to the Move function
